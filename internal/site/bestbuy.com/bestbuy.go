@@ -7,6 +7,7 @@ import (
 	"github.com/Gssssssssy/ns-onsale/internal/site"
 	"github.com/gocolly/colly"
 	"github.com/avast/retry-go"
+	"time"
 )
 
 // 链接
@@ -26,6 +27,7 @@ const (
 type response struct {
 }
 
+// 询价
 func Inquiry(ctx context.Context, task schedule.Task) {
 	var (
 		c             = site.MakeColly()
@@ -37,7 +39,7 @@ func Inquiry(ctx context.Context, task schedule.Task) {
 	})
 	err = retry.Do(func() error {
 		return c.Visit(InquiryURL)
-	})
+	}, retry.Delay(time.Second), retry.Attempts(site.DefaultRetryTimes))
 	if err != nil {
 		return
 	}
